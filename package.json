@@ -2,5 +2,15 @@
   "private": true,
   "name": "xiami-archiver",
   "version": "0.0.0",
-  "author": "yelo <zhihuzeye@gmail.com>"
+  "author": "yelo <zhihuzeye@gmail.com>",
+  "main": "src",
+  "scripts": {
+    "start": "node .",
+    "chrome": "docker run -v `pwd`/.chrome:/data -e \"DEFAULT_USER_DATA_DIR=/data/profile\" -e \"WORKSPACE_DELETE_EXPIRED=false\" -p 3000:3000 --restart always -d --name chrome browserless/chrome"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.5",
+    "config": "^3.3.3",
+    "puppeteer": "^6.0.0"
+  }
 }

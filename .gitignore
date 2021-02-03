@@ -3,5 +3,9 @@ node_modules
 .DS_Store
 yarn-error.log
 
+# runtime
+/.chrome
+/config/local.*
+
 # ultra runner
 .ultra.cache.json
