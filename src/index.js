@@ -1,6 +1,5 @@
-const fetchHTML = require('./libs/fetchHTML')
+const { getFavoriteCollections } = require('./services/favorite-collections')
 
 ;(async () => {
-  const html = await fetchHTML('https://emumo.xiami.com/space/collect-fav/u/1915514')
-  console.log(html)
+  const collections = await getFavoriteCollections()
 })()
