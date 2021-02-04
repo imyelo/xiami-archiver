@@ -7,7 +7,7 @@ const { fetchHTML } = require('../libs/fetch')
 const database = require('../libs/database')
 const { match, nodeText } = require('../utils')
 
-const CONCURRENCE = config.get('fetcher.concurrency')
+const CONCURRENCE = config.get('archiver.common.concurrency')
 const PAGE_SIZE = 12
 
 const archiveUserFavoriteCollections = async ({ userId }) => {
