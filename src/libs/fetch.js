@@ -1,6 +1,11 @@
+const path = require('path')
 const puppeteer = require('puppeteer')
 const cheerio = require('cheerio')
 const config = require('config')
+const makeDir = require('make-dir')
+const { PuppeteerWARCGenerator, PuppeteerCapturer } = require('node-warc')
+
+const WARC_PATH = config.get('archiver.warc.path')
 
 const sharedBrowser = (() => {
   let instance = null
@@ -21,14 +26,36 @@ const sharedBrowser = (() => {
   }
 })()
 
+const createArchiver = (page) => {
+  const cap = new PuppeteerCapturer(page, 'request')
+  cap.startCapturing()
+  return {
+    generate: async () => {
+      const warcGen = new PuppeteerWARCGenerator()
+      await makeDir(WARC_PATH)
+      await warcGen.generateWARC(cap, {
+        warcOpts: {
+          warcPath: path.resolve(WARC_PATH, `${Date.now()}.warc`)
+        },
+        winfo: {
+          description: `URL: ${page.url()} .Archived by Yelo`,
+          isPartOf: 'Xiami Archive',
+        },
+      })
+    },
+  }
+}
+
 const fetchHTML = async (url) => {
   const browser = sharedBrowser.instance || await puppeteer.launch({
     headless: config.get('puppeteer.headless'),
     userDataDir: config.get('puppeteer.userDataDir'),
   })
   const page = await browser.newPage()
+  const archiver = createArchiver(page)
   await page.goto(url, { waitUntil: 'networkidle2' })
   const html = await page.evaluate(() => window.document.querySelector('html').outerHTML)
+  await archiver.generate()
   await page.close();
   if (!sharedBrowser.instance) {
     await browser.close()

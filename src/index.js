@@ -9,7 +9,7 @@ const { sharedBrowser } = require('./libs/fetch')
   // archiveCollection({ id: 1325571090 })
   await sharedBrowser.launch()
   await Promise.all([
-    queueUserFavoriteCollections(44278462),
+    // queueUserFavoriteCollections(44278462),
     queueCollection(1325571090),
   ])
   await sharedBrowser.close()
