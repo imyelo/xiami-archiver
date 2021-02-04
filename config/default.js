@@ -8,4 +8,7 @@ module.exports = {
   keyv: {
     uri: `sqlite://${path.resolve(__dirname, '../data/keyv.sqlite')}`,
   },
+  fetcher: {
+    concurrency: 2,
+  },
 }
