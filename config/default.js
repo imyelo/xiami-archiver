@@ -31,7 +31,7 @@ module.exports = {
       concurrency: 2,
     },
     collection: {
-      concurrency: 2,
+      concurrency: 8,
     },
     'user-favorite-songs': {
       concurrency: 2,
@@ -40,7 +40,7 @@ module.exports = {
       concurrency: 2,
     },
     song: {
-      concurrency: 2,
+      concurrency: 20,
     },
   },
 }

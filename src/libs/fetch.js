@@ -1,5 +1,7 @@
 const path = require('path')
+const fs = require('fs-extra')
 const puppeteer = require('puppeteer')
+const hasha = require('hasha')
 const config = require('config')
 const makeDir = require('make-dir')
 const { PuppeteerWARCGenerator, PuppeteerCapturer } = require('node-warc')
@@ -41,7 +43,9 @@ const createSnapshot = (page) => {
   return {
     generate: async () => {
       const warcGen = new PuppeteerWARCGenerator()
-      const dirname = path.join(SNAPSHOT_PATH, String(Date.now()))
+      const url = page.url()
+      const key = hasha(url)
+      const dirname = path.join(SNAPSHOT_PATH, key)
       await makeDir(dirname)
       await warcGen.generateWARC(cap, {
         warcOpts: {
@@ -52,7 +56,12 @@ const createSnapshot = (page) => {
           isPartOf: 'Xiami Archive',
         },
       })
-      await page.screenshot({ path: path.join(dirname, 'screenshot.png')})
+      await page.screenshot({ path: path.join(dirname, 'screenshot.png'), fullPage: true })
+      await fs.writeJSON(path.join(dirname, 'archive.json'), {
+        key,
+        url,
+        createdAt: Date.now(),
+      })
     },
   }
 }
