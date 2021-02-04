@@ -18,6 +18,7 @@
     "lodash": "^4.17.20",
     "make-dir": "^3.1.0",
     "p-queue": "^6.6.2",
+    "path-exists": "^4.0.0",
     "puppeteer": "^6.0.0"
   }
 }
