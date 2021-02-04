@@ -6,6 +6,7 @@ yarn-error.log
 # runtime
 /.chrome
 /config/local.*
+/data
 
 # ultra runner
 .ultra.cache.json
