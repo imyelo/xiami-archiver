@@ -10,6 +10,7 @@ module.exports = {
   },
   archiver: {
     warc: {
+      enabled: false,
       path: path.resolve(__dirname, '../data/warc'),
     },
     image: {

@@ -5,15 +5,18 @@ const config = require('config')
 const makeDir = require('make-dir')
 const { PuppeteerWARCGenerator, PuppeteerCapturer } = require('node-warc')
 
+const WARC_ENABLED = config.get('archiver.warc.enabled')
 const WARC_PATH = config.get('archiver.warc.path')
+
+const createBrowser = () => puppeteer.launch({
+    headless: config.get('puppeteer.headless'),
+    userDataDir: config.get('puppeteer.userDataDir'),
+  })
 
 const sharedBrowser = (() => {
   let instance = null
   const launch = async () => {
-    instance = await puppeteer.launch({
-      headless: config.get('puppeteer.headless'),
-      userDataDir: config.get('puppeteer.userDataDir'),
-    })
+    instance = await createBrowser()
   }
   const close = async () => {
     await instance.close()
@@ -27,6 +30,11 @@ const sharedBrowser = (() => {
 })()
 
 const createArchiver = (page) => {
+  if (!WARC_ENABLED) {
+    return {
+      generate: () => {},
+    }
+  }
   const cap = new PuppeteerCapturer(page, 'request')
   cap.startCapturing()
   return {
@@ -47,10 +55,7 @@ const createArchiver = (page) => {
 }
 
 const fetchHTML = async (url) => {
-  const browser = sharedBrowser.instance || await puppeteer.launch({
-    headless: config.get('puppeteer.headless'),
-    userDataDir: config.get('puppeteer.userDataDir'),
-  })
+  const browser = sharedBrowser.instance || await createBrowser()
   const page = await browser.newPage()
   const archiver = createArchiver(page)
   await page.goto(url, { waitUntil: 'networkidle2' })
