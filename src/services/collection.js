@@ -1,6 +1,6 @@
 const config = require('config')
 const cheerio = require('cheerio')
-const debug = require('Debug')('xiami')
+const debug = require('Debug')('xiami:service')
 const { fetchHTML, fetchJSON } = require('../libs/fetch')
 const database = require('../libs/database')
 const createQueue = require('../libs/queue')

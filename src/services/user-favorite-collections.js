@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const cheerio = require('cheerio')
-const debug = require('Debug')('xiami')
+const debug = require('Debug')('xiami:service')
 const { default: PQueue } = require('p-queue')
 const { fetchHTML } = require('../libs/fetch')
 const database = require('../libs/database')
