@@ -35,7 +35,7 @@ const Queuer = {
     Queuer.image(collection.cover)
   },
   song: async (id) => {
-    await queueSong(id)
+    // await queueSong(id)
   },
   image: queueImage,
 }

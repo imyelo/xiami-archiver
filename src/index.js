@@ -3,6 +3,11 @@ const run = require('./core/run')
 
 run(async () => {
   await Queuer.user(1915514)
+  await Queuer.user(44278462)
+  await Queuer.user(4847358)
+  await Queuer.user(9930815)
+  await Queuer.user(8829642)
+  await Queuer.user(3838959)
 })
 
 // const { archiveCollection, queueCollection } = require('./services/collection')

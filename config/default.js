@@ -25,22 +25,22 @@ module.exports = {
       path: path.resolve(__dirname, '../data/images'),
     },
     'user-favorite-collections': {
-      concurrency: 2,
+      concurrency: 8,
     },
     'user-collections': {
-      concurrency: 2,
+      concurrency: 8,
     },
     collection: {
       concurrency: 8,
     },
     'user-favorite-songs': {
-      concurrency: 2,
+      concurrency: 8,
     },
     'user-top-songs': {
-      concurrency: 2,
+      concurrency: 8,
     },
     song: {
-      concurrency: 20,
+      concurrency: 50,
     },
   },
 }
