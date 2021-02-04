@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer')
+const cheerio = require('cheerio')
 const config = require('config')
 
 const fetchHTML = async (url) => {
@@ -13,4 +14,10 @@ const fetchHTML = async (url) => {
   return html
 }
 
-module.exports = fetchHTML
+const fetchJSON = async (url) => {
+  const html = await fetchHTML(url)
+  return JSON.parse(cheerio.load(html)('body').text())
+}
+
+exports.fetchHTML = fetchHTML
+exports.fetchJSON = fetchJSON

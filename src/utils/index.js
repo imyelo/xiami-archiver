@@ -7,3 +7,14 @@ exports.match = (str, regexp) => {
     return matched[1]
   }
 }
+
+exports.nodeText = ($node, currentNodeOnly = true) => {
+  if (!currentNodeOnly) {
+    return $node.text()
+  }
+  return $node.clone().children().remove().end().text()
+}
+
+exports.findNodeWithText = ($, $node, text) => {
+  return $($node.get().find((element) => $(element).text().includes(text)))
+}
