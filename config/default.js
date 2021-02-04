@@ -17,10 +17,13 @@ module.exports = {
       concurrency: 8,
       path: path.resolve(__dirname, '../data/images'),
     },
+    'user-favorite-collections': {
+      concurrency: 2,
+    },
     collection: {
       concurrency: 2,
     },
-    'user-favorite-collections': {
+    song: {
       concurrency: 2,
     },
   },

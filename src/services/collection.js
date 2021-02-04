@@ -15,6 +15,7 @@ const archiveCollection = async id => {
   const $info = $('#info_collect .cdinfo li')
   const $author = findNodeWithText($, $info, '制作人')
   const collection = {
+    id,
     title: trim($('#info_collect h2').text()),
     introduction: trim($('.info_intro_full').html()),
     cover: $('#info_collect .cover img').attr('src'),

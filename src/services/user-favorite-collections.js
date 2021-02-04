@@ -57,6 +57,7 @@ const archiveUserFavoriteCollectionsWithPage = async (userId, page = 1) => {
           .get(),
         count: +match(nodeText($info.find('.detail .name')), /^\((\d+)\)$/),
         updatedAt: match($info.find('.detail .author .time').text(), /^更新于:(\d{4}-\d{2}-\d{2})$/),
+        favoritedBy: userId,
       }
     })
     .get()
