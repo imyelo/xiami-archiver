@@ -23,6 +23,12 @@ module.exports = {
     collection: {
       concurrency: 2,
     },
+    'user-favorite-songs': {
+      concurrency: 2,
+    },
+    'user-top-songs': {
+      concurrency: 2,
+    },
     song: {
       concurrency: 2,
     },

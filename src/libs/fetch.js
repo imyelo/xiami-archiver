@@ -23,7 +23,7 @@ const sharedBrowser = (() => {
     instance = null
   }
   return {
-    instance,
+    instance: () => instance,
     launch,
     close,
   }
@@ -55,14 +55,15 @@ const createArchiver = (page) => {
 }
 
 const fetchHTML = async (url) => {
-  const browser = sharedBrowser.instance || await createBrowser()
+  console.log('1', sharedBrowser)
+  const browser = sharedBrowser.instance() || await createBrowser()
   const page = await browser.newPage()
   const archiver = createArchiver(page)
   await page.goto(url, { waitUntil: 'networkidle2' })
   const html = await page.evaluate(() => window.document.querySelector('html').outerHTML)
   await archiver.generate()
   await page.close();
-  if (!sharedBrowser.instance) {
+  if (!sharedBrowser.instance()) {
     await browser.close()
   }
   return html
