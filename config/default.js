@@ -4,6 +4,10 @@ module.exports = {
   puppeteer: {
     headless: true,
     userDataDir: path.resolve(__dirname, '../.chrome/profile'),
+    defaultViewport: {
+      width: 1280,
+      height: 960,
+    },
   },
   keyv: {
     uri: `sqlite://${path.resolve(__dirname, '../data/keyv.sqlite')}`,
@@ -12,9 +16,9 @@ module.exports = {
     sharedBrowser: {
       enabled: true,
     },
-    warc: {
-      enabled: false,
-      path: path.resolve(__dirname, '../data/warc'),
+    snapshot: {
+      enabled: true,
+      path: path.resolve(__dirname, '../data/snapshot'),
     },
     image: {
       concurrency: 8,

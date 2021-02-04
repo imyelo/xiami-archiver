@@ -1,17 +1,17 @@
 const path = require('path')
 const puppeteer = require('puppeteer')
-const cheerio = require('cheerio')
 const config = require('config')
 const makeDir = require('make-dir')
 const { PuppeteerWARCGenerator, PuppeteerCapturer } = require('node-warc')
 
 const SHARED_BROWSER_ENABLED = config.get('archiver.sharedBrowser.enabled')
-const WARC_ENABLED = config.get('archiver.warc.enabled')
-const WARC_PATH = config.get('archiver.warc.path')
+const SNAPSHOT_ENABLED = config.get('archiver.snapshot.enabled')
+const SNAPSHOT_PATH = config.get('archiver.snapshot.path')
 
 const createBrowser = () => puppeteer.launch({
     headless: config.get('puppeteer.headless'),
     userDataDir: config.get('puppeteer.userDataDir'),
+    defaultViewport: config.get('puppeteer.defaultViewport'),
   })
 
 const sharedBrowser = (() => {
@@ -30,8 +30,8 @@ const sharedBrowser = (() => {
   }
 })()
 
-const createArchiver = (page) => {
-  if (!WARC_ENABLED) {
+const createSnapshot = (page) => {
+  if (!SNAPSHOT_ENABLED) {
     return {
       generate: () => {},
     }
@@ -41,16 +41,18 @@ const createArchiver = (page) => {
   return {
     generate: async () => {
       const warcGen = new PuppeteerWARCGenerator()
-      await makeDir(WARC_PATH)
+      const dirname = path.join(SNAPSHOT_PATH, String(Date.now()))
+      await makeDir(dirname)
       await warcGen.generateWARC(cap, {
         warcOpts: {
-          warcPath: path.resolve(WARC_PATH, `${Date.now()}.warc`)
+          warcPath: path.join(dirname, 'archive.warc')
         },
         winfo: {
           description: `URL: ${page.url()} .Archived by Yelo`,
           isPartOf: 'Xiami Archive',
         },
       })
+      await page.screenshot({ path: path.join(dirname, 'screenshot.png')})
     },
   }
 }
@@ -58,10 +60,10 @@ const createArchiver = (page) => {
 const fetchHTML = async (url) => {
   const browser = sharedBrowser.instance() || await createBrowser()
   const page = await browser.newPage()
-  const archiver = createArchiver(page)
+  const snapshot = createSnapshot(page)
   const response = await page.goto(url, { waitUntil: 'networkidle2' })
   const html = await response.text()
-  await archiver.generate()
+  await snapshot.generate()
   await page.close();
   if (!sharedBrowser.instance()) {
     await browser.close()

@@ -9,6 +9,11 @@ const CONCURRENCE = config.get('archiver.collection.concurrency')
 const { add: queueCollection } = createQueue('COLLECTION', { concurrency: CONCURRENCE }, id => archiveCollection(id))
 
 const archiveCollection = async id => {
+  const key = `collection:${id}`
+  const existed = await database.get(key)
+  if (existed) {
+    return existed
+  }
   const html = await fetchHTML(`https://emumo.xiami.com/collect/${id}`)
   const items = await fetchCollectionItems(id)
   const $ = cheerio.load(html)
@@ -28,7 +33,7 @@ const archiveCollection = async id => {
     updatedAt: trim(nodeText(findNodeWithText($, $info, '更新时间'))),
   }
 
-  await database.set(`collection:${id}`, collection)
+  await database.set(existed, collection)
   return collection
 }
 

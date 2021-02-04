@@ -9,6 +9,11 @@ const CONCURRENCE = config.get('archiver.song.concurrency')
 const { add: queueSong } = createQueue('SONG', { concurrency: CONCURRENCE }, id => archiveSong(id))
 
 const archiveSong = async id => {
+  const key = `song:${id}`
+  const existed = await database.get(key)
+  if (existed) {
+    return existed
+  }
   const html = await fetchHTML(`https://emumo.xiami.com/song/${id}`)
   const $ = cheerio.load(html)
   const $info = $('#albums_info tr')
@@ -37,7 +42,7 @@ const archiveSong = async id => {
     },
     lyric: trim($('.lrc_main').html()),
   }
-  await database.set(`song:${id}`, song)
+  await database.set(key, song)
   return song
 }
 
