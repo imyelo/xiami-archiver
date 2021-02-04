@@ -32,8 +32,8 @@ const archiveCollection = async ({ id }) => {
       name: $author.find('a').text(),
     },
     items,
-    count: nodeText(findNodeWithText($, $info, '歌曲数')).trim(),
-    updatedAt: nodeText(findNodeWithText($, $info, '更新时间')).trim(),
+    count: nodeText(findNodeWithText($, $info, '歌曲数'))?.trim(),
+    updatedAt: nodeText(findNodeWithText($, $info, '更新时间'))?.trim(),
   }
 
   await database.set(`collection:${id}`, collection)

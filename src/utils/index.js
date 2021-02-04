@@ -9,6 +9,9 @@ exports.match = (str, regexp) => {
 }
 
 exports.nodeText = ($node, currentNodeOnly = true) => {
+  if (!$node) {
+    return
+  }
   if (!currentNodeOnly) {
     return $node.text()
   }
