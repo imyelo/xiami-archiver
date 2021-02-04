@@ -1,3 +1,10 @@
+const Queuer = require('./core/queuer')
+const run = require('./core/run')
+
+run(async () => {
+  await Queuer.user(1915514)
+})
+
 // const { archiveCollection, queueCollection } = require('./services/collection')
 // const { queueSong } = require('./services/song')
 // const { queueUserFavoriteSongs } = require('./services/user-favorite-songs')
@@ -22,5 +29,3 @@
   // ])
   // await sharedBrowser.close()
 // })()
-
-require('./core/application')

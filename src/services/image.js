@@ -11,6 +11,12 @@ const DIST_PATH = config.get('archiver.image.path')
 const { add: queueImage } = createQueue('IMAGE', { concurrency: CONCURRENCE }, (uri) => archiveImage(uri))
 
 const archiveImage = async (uri) => {
+  if (!uri) {
+    return
+  }
+  if (uri.startsWith('//')) {
+    uri = `http:${uri}`
+  }
   const url = new URL(uri)
   const dirname = path.join(DIST_PATH, url.hostname, path.dirname(url.pathname))
   const isExisted = await pathExists(path.join(dirname, path.basename(url.pathname)))
