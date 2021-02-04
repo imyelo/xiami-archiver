@@ -11,18 +11,18 @@ const { match, nodeText } = require('../utils')
 const PAGINATION_CONCURRENCE = 1
 const PAGE_SIZE = 12
 
-const CONCURRENCE = config.get('archiver.user-favorite-collections.concurrency')
-const { add: queueUserFavoriteCollections } = createQueue('FAVORITE-COLLECTION', { concurrency: CONCURRENCE }, userId =>
-  archiveUserFavoriteCollections(userId)
+const CONCURRENCE = config.get('archiver.user-collections.concurrency')
+const { add: queueUserCollections } = createQueue('USER-COLLECTION', { concurrency: CONCURRENCE }, userId =>
+  archiveUserCollections(userId)
 )
 
-const archiveUserFavoriteCollections = async userId => {
-  const log = message => debug(`[FAVORITE-COLLECTIONS] [用户 ${userId}]: ${message}`)
+const archiveUserCollections = async userId => {
+  const log = message => debug(`[USER-COLLECTIONS] [用户 ${userId}]: ${message}`)
   const html = await fetchHTML(`https://emumo.xiami.com/space/collect-fav/u/${userId}`)
   const $ = cheerio.load(html)
   const count = match($('.all_page > span').text(), /^\(第\d+页, 共(\d+)条\)$/)
   const pages = Math.ceil(count / PAGE_SIZE)
-  await database.set(`user-favorite-collections:${userId}:count`, {
+  await database.set(`user-collections:${userId}:count`, {
     count,
     pages,
   })
@@ -31,7 +31,7 @@ const archiveUserFavoriteCollections = async userId => {
   const collectionsByPage = new Map()
   _.range(1, pages + 1).forEach(async page => {
     await queue.add(async () => {
-      const collections = await archiveUserFavoriteCollectionsWithPage(userId, page)
+      const collections = await archiveUserCollectionsWithPage(userId, page)
       collectionsByPage.set(page, collections)
     })
     log(`完成页码: ${page}`)
@@ -46,7 +46,7 @@ const archiveUserFavoriteCollections = async userId => {
   )
 }
 
-const archiveUserFavoriteCollectionsWithPage = async (userId, page = 1) => {
+const archiveUserCollectionsWithPage = async (userId, page = 1) => {
   const html = await fetchHTML(`https://emumo.xiami.com/space/collect-fav/u/${userId}/order//page/${page}`)
   const $ = cheerio.load(html)
   const collections = $('.collectThread_list li')
@@ -58,22 +58,20 @@ const archiveUserFavoriteCollectionsWithPage = async (userId, page = 1) => {
         name: $info.find('.detail .name > a').text(),
         cover: $info.find('.info .cover img').attr('src'),
         author: {
-          id: match($info.find('.detail .author a').attr('href'), /^\/u\/(\d+)/),
-          name: $info.find('.detail .author a').text(),
+          id: userId,
         },
         tags: $element
           .find('.tag_block .hot0')
           .map((_, element) => $(element).text())
           .get(),
         count: +match(nodeText($info.find('.detail .name')), /^\((\d+)\)$/),
-        updatedAt: match($info.find('.detail .author .time').text(), /^更新于:(\d{4}-\d{2}-\d{2})$/),
-        favoritedBy: userId,
+        updatedAt: match($info.find('.detail .author .time').text()),
       }
     })
     .get()
-  await database.set(`user-favorite-collections:${userId}:page:${page}`, collections)
+  await database.set(`user-collections:${userId}:page:${page}`, collections)
   return collections
 }
 
-exports.archiveUserFavoriteCollections = archiveUserFavoriteCollections
-exports.queueUserFavoriteCollections = queueUserFavoriteCollections
+exports.archiveUserCollections = archiveUserCollections
+exports.queueUserCollections = queueUserCollections

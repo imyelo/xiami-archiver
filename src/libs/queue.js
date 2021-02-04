@@ -11,8 +11,12 @@ const createQueue = (name, options, fn) => {
   });
 
   const add = async (...args) => {
-    await queue.add(() => fn(...args))
+    let result = null
+    await queue.add(async () => {
+      result = await fn(...args)
+    })
     debug(`[${name}]: 完成 ${JSON.stringify(args)}`)
+    return result
   }
 
   return { queue, add }

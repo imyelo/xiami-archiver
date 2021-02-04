@@ -19,6 +19,7 @@
     "lodash": "^4.17.20",
     "make-dir": "^3.1.0",
     "node-warc": "^3.3.1",
+    "p-all": "^3.0.0",
     "p-queue": "^6.6.2",
     "path-exists": "^4.0.0",
     "puppeteer": "^6.0.0"

@@ -59,8 +59,8 @@ const fetchHTML = async (url) => {
   const browser = sharedBrowser.instance() || await createBrowser()
   const page = await browser.newPage()
   const archiver = createArchiver(page)
-  await page.goto(url, { waitUntil: 'networkidle2' })
-  const html = await page.evaluate(() => window.document.querySelector('html').outerHTML)
+  const response = await page.goto(url, { waitUntil: 'networkidle2' })
+  const html = await response.text()
   await archiver.generate()
   await page.close();
   if (!sharedBrowser.instance()) {
@@ -69,9 +69,9 @@ const fetchHTML = async (url) => {
   return html
 }
 
-const fetchJSON = async url => {
-  const html = await fetchHTML(url)
-  return JSON.parse(cheerio.load(html)('body').text())
+const fetchJSON = async (url) => {
+  const content = await fetchHTML(url)
+  return JSON.parse(content)
 }
 
 exports.sharedBrowser = sharedBrowser

@@ -26,12 +26,22 @@ const archiveUserFavoriteSongs = async (userId) => {
   })
   log(`总数: ${count}. 总页数: ${pages}.`)
   const queue = new PQueue({ concurrency: PAGINATION_CONCURRENCE })
+  const songsByPage = new Map()
   _.range(1, pages + 1).forEach(async page => {
-    await queue.add(() => archiveUserFavoriteSongsWithPage(userId, page))
+    await queue.add(async () => {
+      const songs = await archiveUserFavoriteSongsWithPage(userId, page)
+      songsByPage.set(page, songs)
+    })
     log(`完成页码: ${page}`)
   })
   await queue.onIdle()
   log(`全部完成`)
+  return _.flatten(
+    _.sortBy(
+      Array.from(songsByPage.entries()).map(([page, songs]) => ({ page, songs })),
+      'page'
+    ).map(({ songs }) => songs)
+  )
 }
 
 const archiveUserFavoriteSongsWithPage = async (userId, page = 1) => {
