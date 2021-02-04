@@ -1,4 +1,4 @@
-# xiami archvier
+# Xiami Archiver
 
 ## Get Started
 1. Clone Repository
