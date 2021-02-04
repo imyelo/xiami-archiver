@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const config = require('config')
 const cheerio = require('cheerio')
 const debug = require('Debug')('xiami')
 const { default: PQueue } = require('p-queue')
@@ -7,7 +6,7 @@ const { fetchHTML } = require('../libs/fetch')
 const database = require('../libs/database')
 const { match, nodeText } = require('../utils')
 
-const CONCURRENCE = config.get('archiver.common.concurrency')
+const PAGINATION_CONCURRENCE = 1
 const PAGE_SIZE = 12
 
 const archiveUserFavoriteCollections = async ({ userId }) => {
@@ -21,7 +20,7 @@ const archiveUserFavoriteCollections = async ({ userId }) => {
     pages,
   })
   log(`总数: ${count}. 总页数: ${pages}.`)
-  const queue = new PQueue({ concurrency: CONCURRENCE });
+  const queue = new PQueue({ concurrency: PAGINATION_CONCURRENCE });
   _.range(1, pages + 1).forEach(async (page) => {
     await queue.add(() => archiveUserFavoriteCollectionsWithPage({ userId, page }))
     log(`完成页码: ${page}`)

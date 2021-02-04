@@ -3,18 +3,12 @@ const { URL } = require('url')
 const config = require('config')
 const download = require('download')
 const debug = require('Debug')('xiami')
-const { default: PQueue } = require('p-queue')
+const createQueue = require('../libs/queue')
 
 const CONCURRENCE = config.get('archiver.image.concurrency')
 const DIST_PATH = config.get('archiver.image.path')
 
-const queue = new PQueue({ concurrency: CONCURRENCE });
-queue.on('add', () => {
-	debug(`[COLLECTION QUEUE]: Size: ${queue.size}. Pending: ${queue.pending}.`);
-});
-queue.on('next', () => {
-	debug(`[COLLECTION QUEUE]: Size: ${queue.size}. Pending: ${queue.pending}.`);
-});
+const queue = createQueue('IMAGE', { concurrency: CONCURRENCE })
 
 const queueImage = async (uri) => {
   const url = new URL(uri)

@@ -9,9 +9,6 @@ module.exports = {
     uri: `sqlite://${path.resolve(__dirname, '../data/keyv.sqlite')}`,
   },
   archiver: {
-    common: {
-      concurrency: 2,
-    },
     image: {
       concurrency: 8,
       path: path.resolve(__dirname, '../data/images'),

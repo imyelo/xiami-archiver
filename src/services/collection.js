@@ -1,26 +1,18 @@
 const config = require('config')
 const cheerio = require('cheerio')
 const debug = require('Debug')('xiami')
-const { default: PQueue } = require('p-queue')
 const { fetchHTML, fetchJSON } = require('../libs/fetch')
 const database = require('../libs/database')
+const createQueue = require('../libs/queue')
 const { match, nodeText, findNodeWithText } = require('../utils')
 
 const CONCURRENCE = config.get('archiver.collection.concurrency')
-
-const queue = new PQueue({ concurrency: CONCURRENCE });
-queue.on('add', () => {
-	debug(`[COLLECTION QUEUE]: Size: ${queue.size}. Pending: ${queue.pending}.`);
-});
-queue.on('next', () => {
-	debug(`[COLLECTION QUEUE]: Size: ${queue.size}. Pending: ${queue.pending}.`);
-});
+const queue = createQueue('COLLECTION', { concurrency: CONCURRENCE })
 
 const queueArchiveCollection = async (id) => {
   await queue.add(() => archiveCollection({ id }))
   debug(`[COLLECTION]: 完成 ${id}`)
 }
-
 const queueArchiveCollections = (ids) => {
   ids.forEach((id) => queueArchiveCollection(id))
 }
