@@ -12,6 +12,10 @@ module.exports = {
     common: {
       concurrency: 2,
     },
+    image: {
+      concurrency: 8,
+      path: path.resolve(__dirname, '../data/images'),
+    },
     collection: {
       concurrency: 2,
     },
