@@ -16,5 +16,8 @@ module.exports = {
     collection: {
       concurrency: 2,
     },
+    'user-favorite-collections': {
+      concurrency: 2,
+    },
   },
 }
