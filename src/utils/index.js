@@ -1,9 +1,9 @@
-exports.extractRegexp = (str, regexp) => {
+exports.match = (str, regexp) => {
   if (!str) {
     return
   }
-  const match = str.match(regexp)
-  if (match) {
-    return match[1]
+  const matched = str.match(regexp)
+  if (matched) {
+    return matched[1]
   }
 }

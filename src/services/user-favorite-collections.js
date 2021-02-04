@@ -5,7 +5,7 @@ const debug = require('Debug')('xiami')
 const { default: PQueue } = require('p-queue')
 const fetchHTML = require('../libs/fetchHTML')
 const database = require('../libs/database')
-const { extractRegexp } = require('../utils')
+const { match } = require('../utils')
 
 const CONCURRENCE = config.get('fetcher.concurrency')
 const PAGE_SIZE = 12
@@ -14,7 +14,7 @@ const archiveUserFavoriteCollections = async ({ userId }) => {
   const log = (message) => debug(`[FAVORITE-COLLECTIONS] [用户 ${userId}]: ${message}`)
   const html = await fetchHTML(`https://emumo.xiami.com/space/collect-fav/u/${userId}`)
   const $ = cheerio.load(html)
-  const count = extractRegexp($('.all_page > span').text(), /^\(第\d+页, 共(\d+)条\)$/)
+  const count = match($('.all_page > span').text(), /^\(第\d+页, 共(\d+)条\)$/)
   const pages = Math.ceil(count / PAGE_SIZE)
   await database.set(`user-favorite-collections:${userId}:count`, {
     count,
@@ -37,16 +37,16 @@ const archiveUserFavoriteCollectionsWithPage = async ({ userId, page = 1 }) => {
     const $element = $(element)
     const $info = $element.find('.info')
     return {
-      id: extractRegexp($info.find('.detail .name > b > a').attr('onclick'), /^playcollect\('(.*)'\)$/),
+      id: match($info.find('.detail .name > b > a').attr('onclick'), /^playcollect\('(.*)'\)$/),
       name: $info.find('.detail .name > a').text(),
       cover: $info.find('.info .cover img').attr('src'),
       author: {
-        id: extractRegexp($info.find('.detail .author a').attr('href'), /^\/u\/(\d+)/),
+        id: match($info.find('.detail .author a').attr('href'), /^\/u\/(\d+)/),
         name: $info.find('.detail .author a').text(),
       },
       tags: $element.find('.tag_block .hot0').map((_, element) => $(element).text()).get(),
-      count: +extractRegexp($info.find('.detail .name').clone().children().remove().end().text(), /^\((\d+)\)$/),
-      updatedAt: extractRegexp($info.find('.detail .author .time').text(), /^更新于:(\d{4}-\d{2}-\d{2})$/),
+      count: +match($info.find('.detail .name').clone().children().remove().end().text(), /^\((\d+)\)$/),
+      updatedAt: match($info.find('.detail .author .time').text(), /^更新于:(\d{4}-\d{2}-\d{2})$/),
     }
   }).get()
   await database.set(`user-favorite-collections:${userId}:page:${page}`, collections)
