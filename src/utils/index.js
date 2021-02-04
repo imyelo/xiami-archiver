@@ -21,3 +21,10 @@ exports.nodeText = ($node, currentNodeOnly = true) => {
 exports.findNodeWithText = ($, $node, text) => {
   return $($node.get().find((element) => $(element).text().includes(text)))
 }
+
+exports.trim = (str) => {
+  if (!str) {
+    return
+  }
+  return str.trim()
+}

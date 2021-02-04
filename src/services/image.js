@@ -3,18 +3,12 @@ const { URL } = require('url')
 const pathExists = require('path-exists')
 const config = require('config')
 const download = require('download')
-const debug = require('Debug')('xiami:service')
 const createQueue = require('../libs/queue')
 
 const CONCURRENCE = config.get('archiver.image.concurrency')
 const DIST_PATH = config.get('archiver.image.path')
 
-const queue = createQueue('IMAGE', { concurrency: CONCURRENCE })
-
-const queueImage = async (uri) => {
-  await queue.add(() => archiveImage(uri))
-  debug(`[IMAGE]: 完成 ${uri}`)
-}
+const { add: queueImage } = createQueue('IMAGE', { concurrency: CONCURRENCE }, (uri) => archiveImage(uri))
 
 const archiveImage = async (uri) => {
   const url = new URL(uri)
