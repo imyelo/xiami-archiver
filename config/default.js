@@ -9,6 +9,9 @@ module.exports = {
     uri: `sqlite://${path.resolve(__dirname, '../data/keyv.sqlite')}`,
   },
   archiver: {
+    sharedBrowser: {
+      enabled: true,
+    },
     warc: {
       enabled: false,
       path: path.resolve(__dirname, '../data/warc'),

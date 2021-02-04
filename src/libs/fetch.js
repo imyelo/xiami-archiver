@@ -5,6 +5,7 @@ const config = require('config')
 const makeDir = require('make-dir')
 const { PuppeteerWARCGenerator, PuppeteerCapturer } = require('node-warc')
 
+const SHARED_BROWSER_ENABLED = config.get('archiver.sharedBrowser.enabled')
 const WARC_ENABLED = config.get('archiver.warc.enabled')
 const WARC_PATH = config.get('archiver.warc.path')
 
@@ -23,7 +24,7 @@ const sharedBrowser = (() => {
     instance = null
   }
   return {
-    instance: () => instance,
+    instance: () => SHARED_BROWSER_ENABLED && instance,
     launch,
     close,
   }
@@ -55,7 +56,6 @@ const createArchiver = (page) => {
 }
 
 const fetchHTML = async (url) => {
-  console.log('1', sharedBrowser)
   const browser = sharedBrowser.instance() || await createBrowser()
   const page = await browser.newPage()
   const archiver = createArchiver(page)
