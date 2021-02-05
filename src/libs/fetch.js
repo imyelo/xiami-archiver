@@ -6,14 +6,20 @@ const config = require('config')
 const makeDir = require('make-dir')
 const { PuppeteerWARCGenerator, PuppeteerCapturer } = require('node-warc')
 
+const PUPPETEER_HEADLESS = config.get('puppeteer.headless')
+const PUPPETEER_USER_DATA_DIR = config.get('puppeteer.userDataDir')
+const PUPPETEER_DEFAULT_VIEWPORT = config.get('puppeteer.defaultViewport')
+const PUPPETEER_PROXY = config.get('puppeteer.proxy')
+
 const SHARED_BROWSER_ENABLED = config.get('archiver.sharedBrowser.enabled')
 const SNAPSHOT_ENABLED = config.get('archiver.snapshot.enabled')
 const SNAPSHOT_PATH = config.get('archiver.snapshot.path')
 
 const createBrowser = () => puppeteer.launch({
-    headless: config.get('puppeteer.headless'),
-    userDataDir: config.get('puppeteer.userDataDir'),
-    defaultViewport: config.get('puppeteer.defaultViewport'),
+    headless: PUPPETEER_HEADLESS,
+    userDataDir: PUPPETEER_USER_DATA_DIR,
+    defaultViewport: PUPPETEER_DEFAULT_VIEWPORT,
+    args: [PUPPETEER_PROXY && `--proxy-server=${PUPPETEER_PROXY}`].filter(Boolean),
   })
 
 const sharedBrowser = (() => {

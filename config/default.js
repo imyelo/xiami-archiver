@@ -8,6 +8,7 @@ module.exports = {
       width: 1280,
       height: 960,
     },
+    proxy: '', // e.g.: http://127.0.0.1:8899
   },
   keyv: {
     uri: `sqlite://${path.resolve(__dirname, '../data/keyv.sqlite')}`,
@@ -25,22 +26,22 @@ module.exports = {
       path: path.resolve(__dirname, '../data/images'),
     },
     'user-favorite-collections': {
-      concurrency: 8,
+      concurrency: 1,
     },
     'user-collections': {
-      concurrency: 8,
+      concurrency: 1,
     },
     collection: {
-      concurrency: 8,
+      concurrency: 1,
     },
     'user-favorite-songs': {
-      concurrency: 8,
+      concurrency: 1,
     },
     'user-top-songs': {
-      concurrency: 8,
+      concurrency: 1,
     },
     song: {
-      concurrency: 50,
+      concurrency: 1,
     },
   },
 }
